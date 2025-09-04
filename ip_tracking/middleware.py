@@ -1,5 +1,6 @@
 from django.utils.timezone import now
-from .models import RequestLog
+from .models import RequestLog, BlockedIP
+from django.http import HttpResponseForbidden
 
 
 class IPLoggingMiddleware:
@@ -12,7 +13,8 @@ class IPLoggingMiddleware:
         # Get client IP
         ip_address = self.get_client_ip(request)
         path = request.path
-
+        if ip_address and BlockedIP.objects.filter(ip_address=ip_address).exists():
+            return HttpResponseForbidden("Forbidden: Your IP has been blocked.")
         # Save log to DB
         RequestLog.objects.create(
             ip_address=ip_address,
