@@ -1,0 +1,6 @@
+django
+celery
+pika
+django-celery-results
+drf-yasg
+gunicorn
